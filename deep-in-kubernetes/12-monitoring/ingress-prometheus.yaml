@@ -1,0 +1,14 @@
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: prometheus
+  namespace: monitoring
+spec:
+  rules:
+  - host: prometheus.mooc.com
+    http:
+      paths:
+      - backend:
+          serviceName: imooc-prom-prometheus-oper-prometheus
+          servicePort: web
+        path: /

@@ -1,0 +1,14 @@
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: prom-grafana
+  namespace: monitoring
+spec:
+  rules:
+  - host: prom-grafana.mooc.com
+    http:
+      paths:
+      - backend:
+          serviceName: imooc-prom-grafana
+          servicePort: 80
+        path: /

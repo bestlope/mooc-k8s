@@ -1,0 +1,51 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: springboot-web
+spec:
+  serviceName: springboot-web-svc
+  replicas: 2
+  selector:
+    matchLabels:
+      app: springboot-web
+  template:
+    metadata:
+      labels:
+        app: springboot-web
+    spec:
+      containers:
+      - name: springboot-web
+        image: hub.mooc.com/kubernetes/springboot-web:v1
+        ports:
+        - containerPort: 8080
+        livenessProbe:
+          tcpSocket:
+            port: 8080
+          initialDelaySeconds: 20
+          periodSeconds: 10
+          failureThreshold: 3
+          successThreshold: 1
+          timeoutSeconds: 5
+        readinessProbe:
+          httpGet:
+            path: /hello?name=test
+            port: 8080
+            scheme: HTTP
+          initialDelaySeconds: 20
+          periodSeconds: 10
+          failureThreshold: 1
+          successThreshold: 1
+          timeoutSeconds: 5
+        volumeMounts:
+        - name: data
+          mountPath: /mooc-data
+  volumeClaimTemplates:
+  - metadata:
+      name: data
+    spec:
+      accessModes:
+      - ReadWriteOnce
+      storageClassName: glusterfs-storage-class
+      resources:
+        requests:
+          storage: 1Gi

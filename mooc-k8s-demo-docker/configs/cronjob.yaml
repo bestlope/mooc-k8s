@@ -1,0 +1,21 @@
+apiVersion: batch/v1beta1
+kind: CronJob
+metadata:
+  name: cronjob-demo
+spec:
+  schedule: "*/1 * * * *"
+  successfulJobsHistoryLimit: 3
+  suspend: false
+  concurrencyPolicy: Forbid
+  failedJobsHistoryLimit: 1
+  jobTemplate:
+    spec:
+      template:
+        metadata:
+          labels:
+            app: cronjob-demo
+        spec:
+          restartPolicy: Never
+          containers:
+          - name: cronjob-demo
+            image: hub.mooc.com/kubernetes/cronjob:v1

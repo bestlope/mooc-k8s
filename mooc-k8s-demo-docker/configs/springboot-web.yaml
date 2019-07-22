@@ -1,0 +1,50 @@
+#deploy
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: springboot-web-demo
+spec:
+  selector:
+    matchLabels:
+      app: springboot-web-demo
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: springboot-web-demo
+    spec:
+      containers:
+      - name: springboot-web-demo
+        image: hub.mooc.com/kubernetes/springboot-web:v1
+        ports:
+        - containerPort: 8080
+---
+#service
+apiVersion: v1
+kind: Service
+metadata:
+  name: springboot-web-demo
+spec:
+  ports:
+  - port: 80
+    protocol: TCP
+    targetPort: 8080
+  selector:
+    app: springboot-web-demo
+  type: ClusterIP
+
+---
+#ingress
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: springboot-web-demo
+spec:
+  rules:
+  - host: springboot.mooc.com
+    http:
+      paths:
+      - path: /
+        backend:
+          serviceName: springboot-web-demo
+          servicePort: 80

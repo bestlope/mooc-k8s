@@ -1,0 +1,61 @@
+#deploy
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: web-demo
+spec:
+  selector:
+    matchLabels:
+      app: web-demo
+  replicas: 3
+  template:
+    metadata:
+      labels:
+        app: web-demo
+    spec:
+      containers:
+      - name: web-demo
+        image: hub.mooc.com/kubernetes/web:v1
+        ports:
+        - containerPort: 8080
+        env:
+        - name: aliyun_logs_catalina
+          value: "stdout"
+        - name: aliyun_logs_access
+          value: "/usr/local/tomcat/logs/*"
+        volumeMounts:
+        - mountPath: /usr/local/tomcat/logs
+          name: accesslogs
+      volumes:
+      - name: accesslogs
+        emptyDir: {}
+---
+#service
+apiVersion: v1
+kind: Service
+metadata:
+  name: web-demo
+spec:
+  ports:
+  - port: 80
+    protocol: TCP
+    targetPort: 8080
+  selector:
+    app: web-demo
+  type: ClusterIP
+
+---
+#ingress
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: web-demo
+spec:
+  rules:
+  - host: web.mooc.com
+    http:
+      paths:
+      - path: /
+        backend:
+          serviceName: web-demo
+          servicePort: 80

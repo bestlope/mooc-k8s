@@ -1,0 +1,34 @@
+#deploy
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: dubb-demo
+spec:
+  selector:
+    matchLabels:
+      app: dubb-demo
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: dubb-demo
+    spec:
+      hostNetwork: true
+      affinity:
+        podAntiAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+          - labelSelector:
+              matchExpressions:
+              - key: app
+                operator: In
+                values:
+                - dubb-demo
+            topologyKey: "kubernetes.io/hostname"
+      containers:
+      - name: dubb-demo
+        image: hub.mooc.com/kubernetes/dubbo:v1
+        ports:
+        - containerPort: 20881
+        env:
+        - name: DUBBO_PORT
+          value: "20881"

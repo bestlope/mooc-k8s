@@ -1,0 +1,13 @@
+<beans xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:dubbo="http://dubbo.apache.org/schema/dubbo"
+       xmlns="http://www.springframework.org/schema/beans"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-4.3.xsd
+       http://dubbo.apache.org/schema/dubbo http://dubbo.apache.org/schema/dubbo/dubbo.xsd">
+
+    <!-- service implementation, as same as regular local bean -->
+    <bean id="demoService" class="com.mooc.demo.service.DemoServiceImpl"/>
+
+    <!-- declare the service interface to be exported -->
+    <dubbo:service interface="com.mooc.demo.api.DemoService" ref="demoService"/>
+
+</beans>

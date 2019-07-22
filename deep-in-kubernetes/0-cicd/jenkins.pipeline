@@ -1,0 +1,22 @@
+node {
+   
+   def BUILD_DIR = "/root/build-workspace/"
+   env.BUILD_DIR = "/root/build-workspace/"
+   env.MODULE = "web-demo"
+   env.HOST = "k8s-web.mooc.com"
+    
+   stage('Preparation') { // for display purposes
+      // Get some code from a GitHub repository
+      git 'https://gitee.com/pa/mooc-k8s-demo-docker.git'
+   }
+   stage('Maven Build') {
+      // Run the maven build
+      sh "mvn -pl ${MODULE} -am -Dmaven.test.failure.ignore clean package"
+   }
+   stage('Build Image') {
+      sh "/root/script/build-image-web.sh"
+   }
+   stage('Deploy') {
+       sh "/root/script/deploy.sh"
+   }
+}

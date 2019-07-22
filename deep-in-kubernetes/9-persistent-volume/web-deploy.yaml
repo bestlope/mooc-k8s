@@ -1,0 +1,33 @@
+#deploy
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: web-deploy
+spec:
+  strategy:
+    rollingUpdate:
+      maxSurge: 25%
+      maxUnavailable: 25%
+    type: RollingUpdate
+  selector:
+    matchLabels:
+      app: web-deploy
+  replicas: 2
+  template:
+    metadata:
+      labels:
+        app: web-deploy
+    spec:
+      containers:
+      - name: web-deploy
+        image: hub.mooc.com/kubernetes/springboot-web:v1
+        ports:
+        - containerPort: 8080
+        volumeMounts:
+          - name: gluster-volume
+            mountPath: "/mooc-data"
+            readOnly: false
+      volumes:
+      - name: gluster-volume
+        persistentVolumeClaim:
+          claimName: glusterfs-pvc
